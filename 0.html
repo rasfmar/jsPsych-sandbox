@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <title>jsPsych Experiment</title>
+
+        <link rel="stylesheet" href="jspsych/css/jspsych.css"/>
+
+        <script src="jspsych/jspsych.js"></script>
+        <script src="jspsych/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="jspsych/plugins/jspsych-image-button-response.js"></script>
+    </head>
+    <body>
+        <h1>Hello!</h1>
+
+        <script>
+            const trials = [
+                {
+                    type: 'html-keyboard-response',
+                    stimulus: 'Welcome'
+                },
+                {
+                    type: 'image-button-response',
+                    stimulus: 'jspsych/examples/img/happy_face_1.jpg',
+                    choices: ['happy','sad']
+                }
+            ];
+
+            jsPsych.init({
+                timeline: trials,
+                on_finish: function() {
+                    jsPsych.data.displayData();
+                }
+            });
+        </script>
+    </body>
+</html>

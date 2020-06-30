@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <title>jsPsych Experiment</title>
+
+        <link rel="stylesheet" href="jspsych/css/jspsych.css"/>
+
+        <script src="jspsych/jspsych.js"></script>
+        <script src="jspsych/plugins/jspsych-html-keyboard-response.js"></script>
+        <script src="jspsych/plugins/jspsych-instructions.js"></script>
+    </head>
+    <body>
+        <h1>Hello!</h1>
+
+        <script>
+            function i() {
+                return {
+                    type: 'instructions',
+                    pages: [
+                        'Press the F key when you see a nonword.<br/>Press the J key when you see a word.<br/>Click the next button to start.'
+                    ],
+                    show_clickable_nav: true
+                }
+            }
+
+            function w() {
+                return {
+                    type: 'html-keyboard-response',
+                    stimulus: jsPsych.timelineVariable('stimulus'),
+                    choices: ['f','j'],
+                    // prompt: 'f = nonword, j = word',
+                    // stimulus_duration: 2000,
+                    data: {
+                        condition: jsPsych.timelineVariable('condition'),
+                        correct_response: jsPsych.timelineVariable('correct_response')
+                    },
+                    // post_trial_gap: 1000,
+                    on_finish: function(data) {
+                        data.accuracy = data.correct_response === jsPsych.pluginAPI.convertKeyCodeToKeyCharacter(data.key_press);
+                    }
+                };
+            }
+
+            function f() {
+                return {
+                    type: 'html-keyboard-response',
+                    stimulus: '<h1>+</h1>',
+                    choices: jsPsych.NO_KEYS,
+                    trial_duration: 500
+                };
+            }
+
+            function t() {
+                return [
+                    { stimulus: '<h1>apple</h1>', condition: 'word', correct_response: 'j' },
+                    { stimulus: '<h1>tree</h1>', condition: 'word', correct_response: 'j' },
+                    { stimulus: '<h1>moxid</h1>', condition: 'nonword', correct_response: 'f' },
+                    { stimulus: '<h1>orap</h1>', condition: 'nonword', correct_response: 'f' }
+                ];
+            }
+
+            function feedback() {
+                return {
+                    type: 'html-keyboard-response',
+                    stimulus: function() {
+                        return jsPsych.data.getLastTrialData().values()[0].accuracy ? 'Correct!' : 'Incorrect';
+                    },
+                    choices: jsPsych.NO_KEYS,
+                    trial_duration: 1000
+                }
+            }
+
+            function p() {
+                return {
+                    timeline: [f(), w(), feedback()],
+                    timeline_variables: t(),
+                    randomize_order: true
+                };
+            }
+
+            const trials = [i(), p()];
+
+            jsPsych.init({
+                timeline: trials,
+                on_finish: function() {
+                    jsPsych.data.displayData();
+                }
+            });
+        </script>
+    </body>
+</html>
